@@ -1,0 +1,374 @@
+<body>
+    <button id="execute">点击我执行命令</button>
+    <button id="undo">点击我执行命令</button>
+    <div id="div1">点我绑定事件</div>
+</body>
+<script>
+    (function() {
+        var fn = function() {
+            var a = 1;
+            console.log(a)
+            return function() {
+                a++;
+                console.log(a)
+            }
+        }
+        var _fn = fn()
+        _fn()
+        _fn()
+
+        var cache = {};
+        var mult = function() {
+            var args = Array.prototype.join.call(arguments, ',')
+            console.log(args, arguments)
+            if(cache[args]) {
+                return cache[args]
+            }
+            var a = 1;
+            for(var i=0, l=arguments.length; i < l; i++) {
+                a = a * arguments[i];
+            }
+            return cache[args] = a;
+        }
+        console.log(mult(1, 2), cache)
+
+        var _mult = (function() {
+            var cache = {};
+            var calculate = function() {
+                var a = 1;
+                console.log(this)
+                for(var i=0,l=arguments.length; i<l;i++) {
+                    a = a * arguments[i]
+                }
+                return a
+            }
+            return function() {
+                console.log(arguments)
+                var agrs = Array.prototype.join.call(arguments, ',')
+                console.log(agrs)
+                if(agrs in cache) {
+                    return cache[agrs]
+                }
+                return cache[agrs] = calculate.apply(null, arguments)
+            }
+        })()
+        console.log(_mult(1, 2))
+    })();
+    console.log('用闭包实现命令模式-----------------');
+    (function() {
+        var Tv = {
+            open: function() {
+                console.log('打开电视')
+            },
+            close: function(){ 
+                console.log( '关上电视机' ); 
+            }
+        }
+        var OpenTvCommand = function( receiver ){ 
+            this.receiver = receiver; 
+        };
+        OpenTvCommand.prototype.execute = function(){
+            this.receiver.open(); // 执行命令，打开电视机
+        };
+        OpenTvCommand.prototype.undo = function(){ 
+            this.receiver.close(); // 撤销命令，关闭电视机
+        };
+        var setCommand = function( command ){
+            var execute = document.getElementById( 'execute' )
+            var undo = document.getElementById( 'undo' )
+            execute.onclick = function(){
+                command.execute(); // 输出：打开电视机
+            }
+            undo.onclick = function(){
+                command.undo(); // 输出：关闭电视机
+            }
+            // execute = undo = null   // 手动把这些变量设为 null,清除占用的内存，不影响回调
+            // console.log(execute, undo)
+        }
+        setCommand(new OpenTvCommand( Tv ))
+        console.log(new OpenTvCommand( Tv ))
+
+        console.log('高阶函数--------------')
+
+        // var getUserInfo = function(userId, callback) {
+        //     $,ajax( 'http://xxx.com/getUserInfo?' + userId, function (data) {
+        //         if(typeof callback === 'function') {
+        //             callback(data)
+        //         }
+        //     })
+        // }
+        // getUserInfo(13157, function (data) {
+        //     console.log(data.userName)
+        // })
+            // 改造前
+        // var appendDiv = function () {
+        //         for(var i=0; i<100; i++) {
+        //             var div = document.createElement('div')
+        //             div.innerHTML = i;
+        //             document.body.appendChild(div)
+        //             div.style.display = 'none';
+        //         }
+        //     }
+        // appendDiv()    
+            // 改造后(回调触发)
+        var appendDiv = function (callback) {
+            for(var i=0; i<100; i++) {
+                var div = document.createElement('div')
+                div.innerHTML = i;
+                document.body.appendChild(div)
+                if(typeof callback === 'function') {
+                    callback(div)
+                }
+            }
+        }
+        appendDiv(function (node) {
+            node.style.display = 'none'
+        })
+        // [1, 4, 3].sort(function(a, b) {
+        //     return a - b
+        // })
+        var isType = function (type) {
+            return function (obj) {
+                return Object.prototype.toString.call(obj) === '[object '+ type +']'
+            }
+        }
+        var isString = isType('String');
+        var isArray = isType( 'Array' );
+        var isNumber = isType( 'Number' );
+        console.log(isArray( [ 1, 2] ))
+
+        var Type = {};
+        for(var i=0, type; type=['String', 'Array', 'Number'][i++];) {
+            console.log(type);
+            (function(type) {
+                Type['is' + type ] = function(obj) {
+                    return Object.prototype.toString.call(obj)
+                }
+            })(type)
+        }
+        console.log(Type)
+        console.log(Type.isArray( [] ))
+
+
+        console.log('单例模式--------getSingle')
+        var getSingle = function (fn) {
+            var ret;
+            return function() {
+                console.log(this, ret)
+                return ret || (ret=fn.apply(this, arguments))
+            }
+        }
+        var getScript = getSingle(function(){
+            return document.createElement('script')
+        })
+        getScript()
+        getScript()
+        
+        console.log('高阶函数实现AOP')
+        Function.prototype.before = function(beforefn) {
+            var __self = this;
+            return function() {
+                console.log(this, '170')
+                console.log(__self, '171')
+                console.log(beforefn, '173')
+
+                beforefn.apply(this,arguments)
+                // return '这里返回给后面的'
+                return __self.apply(this, arguments)
+            }
+        }
+        Function.prototype.after = function(afterfn) {
+            var __self = this;
+            return function() {
+                console.log(__self, '181')
+                console.log(afterfn, '182')
+                console.log(this, '183')
+                var ret = __self.apply(this, arguments)
+                // console.log(ret)
+                afterfn.apply(this,arguments)
+                return ret
+            }
+        }
+
+        var fn = function() {
+            console.log(2)
+        }
+        fv = fn.before(function() {
+            console.log(1)
+        })
+        .after(function() {
+            console.log(3)
+        })
+        console.log(fv())
+
+    console.log('高阶函数的其他应用----------------------')
+    var cost = (function(){
+        var args = [];
+        return function() {
+            if(arguments.length === 0) {
+                var money = 0;
+                for(var i=0,l = args.length; i<l;i++){
+                    money+=args[i];
+                }
+                return money;
+            }else {
+                [].push.apply(args, arguments)
+            }
+        }
+    })()
+    cost(10)
+    cost(30)
+    console.log(cost())
+
+    console.log('通用版的currying-----------')
+    var currying = function(fn) {
+        var args = [];
+        return function() {
+            if(arguments.length === 0) {
+                return fn.apply(this, args)
+            } else {
+                [].push.apply(args, arguments);
+                return arguments.callee
+            }
+        }
+    }
+    var _cost = (function(){
+        var money = 0
+        return function() {
+            for(var i =0,l=arguments.length;i<l;i++) {
+                money+=arguments[i]
+            }
+            return money
+        }
+    })()
+    var _cost = currying(_cost)
+    console.log(_cost(30))
+
+
+    console.log('uncurrying----------------')
+    Function.prototype.uncurrying = function() {
+        var self = this;
+        console.log(self, '250')
+        return function() {
+            console.log(arguments)
+            var obj = Array.prototype.shift.call(arguments);
+            console.log(obj, '254')
+            return self.apply(obj, arguments)
+        }
+    }
+    var push = Array.prototype.push.uncurrying();
+    (function() {
+        // console.log(arguments)
+        console.log(push(arguments, 4), arguments)
+    })(1,2)
+    })()
+console.log('防抖')
+var throttle = function(fn, interval) {
+    var self = fn,
+        timer,
+        firstTime = true;
+    
+    return function () {
+        var args =arguments,
+            _me = this;
+        console.log(_me, '_me')
+        console.log(this, 'this')
+        if(firstTime) {
+            self.apply(_me, args)
+            return firstTime = false;
+        }
+        if(timer) {
+            return false
+        }
+        timer = setTimeout(()=>{
+            clearTimeout(timer)
+            timer = null
+            self.apply(_me. args)
+        }, interval || 500)
+    }
+}
+window.onresize = throttle(function() {
+    console.log('触发了')
+}, 500)
+
+console.log('分流函数');
+(function() {
+    var ary = []
+
+    for(var i =0; i<=10; i++) {
+        ary.push(i)
+    }
+    // var renderFriendList = function(data) {
+    //     for(var i =0, l=data.length; i<l; i++){
+    //         var div = document.createElement('div');
+    //         div.innerHTML = i;
+    //         document.body.appendChild(div)
+    //     }
+    // }
+    // renderFriendList(ary)
+
+    var timeChunk = function(ary, fn, count) {
+        var ob, t;
+        var len = ary.length;
+        var start = function() {
+            // console.log(Math.min(count || 1, ary.length))
+            for(var i=0;i<Math.min(count || 1, ary.length); i++) {
+                var obj = ary.shift()
+                // console.log(obj, 'obj---------');
+                fn(obj)
+                // debugger
+
+            }
+        }
+        return function() {
+            t = setInterval(() => {
+                if(ary.length === 0) {
+                    return clearInterval(t)
+                }
+                start()
+            }, 200);
+        }
+    }
+    var renderFriendList = timeChunk(ary, function(n) {
+        var div = document.createElement('div')
+        console.log('n:', n)
+        div.innerHTML = n
+        document.body.appendChild(div)
+    }, 5)
+    renderFriendList()
+})();
+console.log('惰性加载函数')
+var addEvent = function( elem, type, handler ){
+    if(window.addEventListener) {
+        console.log('addEventListener')
+        addEvent = function(elem, type, handler) {
+            elem.addEventListener(type, handler, false)
+        }
+    } else if (window.attachEvent) {
+        console.log('attachEvent')
+        addEvent = function(elem, type, handler) {
+            elem.attachEvent('on'+type, handler)
+        }
+    }
+    console.log(addEvent, ':addEvent')
+    addEvent( elem, type, handler );
+}
+var div = document.getElementById('div1')
+console.log(addEvent(div, 'click', function() {
+    console.log(3)
+}))
+
+function test(bol) {
+   if(bol) {
+    test = function() {
+        console.log(1, 'true')
+    }
+   }else {
+       test = function() {
+           console.log(0, 'false')
+       }
+   }
+   test()
+}
+test(true)
+</script>

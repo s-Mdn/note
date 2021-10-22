@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function fn() {
+            var cache = []
+            var ret = {
+                list: function() {
+                    console.log( cache , 'cache')
+                    cache = {}
+                }
+            }
+            return ret
+        }
+        // let ret = fn()
+        // // ret.list()   // 执行同一个
+        // // ret.list()   
+        // fn().list()     // 从头开始执行
+        // fn().list()     
+        // let res = fn()
+        // res.list()
+        
+    // 增加空间名
+    // let testFn = (function() {
+    //     var namespaceCache = {};
+    //     var create = function( namespace ) {
+    //         var cache = [];
+    //         var ret = {
+    //             list: function() {
+    //                 cache = {}
+    //             }
+    //         }
+    //         return namespace? ( namespaceCache[ namespace ]? namespaceCache[ namespace ]: namespaceCache[ namespace ]=ret): ret 
+    //     }
+    //     // console.log(namespaceCache)
+    //     return { create: create }
+    // })()
+
+    // testFn.create('namespace')
+    // testFn.create('namespace1')
+
+    var Event = function() {
+        let namespaceCache = {};
+        let Event;
+        Event = function(){
+            var create = function( namespace ) {
+                var cache = []          // 测试内容
+                var ret = {
+                    list: function() {
+                        console.log('触发了', cache)
+                        cache = {}
+                        debugger
+                    }
+                }
+                return namespace? ( namespaceCache[ namespace ]? namespaceCache[ namespace ]: namespaceCache[ namespace ]=ret): ret  
+            }
+            return { create }
+        }()
+        return Event
+    }()
+   
+    Event.create('namespace').list()
+    Event.create('namespace').list()
+    </script>
+</body>
+</html>

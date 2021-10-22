@@ -1,0 +1,145 @@
+<div id="div">this</div>
+<script>
+    // var testName = 'globalName';
+    // function getName() {
+    //     return this.testName
+    // }
+    // console.log(getName())
+    // document.getElementById('div').onclick= function() {
+    //     console.log(this, 'onclick')
+    //     var callback = function() {
+    //         console.log(this, 'callback')
+    //     }
+    //     callback()
+    // }
+
+    // function foo(num) {
+    //     console.log('foo:' + num)
+    //     this.count++
+    // }
+    // foo.count = 0
+    // var i ;
+    // for(i=0; i<10;i++) {
+    //     if(i>5) {
+    //         foo(i)
+    //     }
+    // }
+    // console.log(foo.count)
+
+    // function foo_1(num){
+    //     console.log('foo:' + num)
+    //     this.count++
+    // }
+    // foo_1.count = 0
+    // var y ;
+    // for(y=0; y<10;y++) {
+    //     if(y>5) {
+    //         foo.call(foo, i)
+    //     }
+    // }
+
+
+
+    // function fun(something) {
+    //     return this.a + something
+    // }
+    // function bind(fn, obj) {
+    //     return function() {
+    //         return fn.apply(obj, arguments)
+    //     }
+    // }
+    // var obj = {a: 2}
+    // var bar = bind(fun, obj)
+    // console.log(bar)
+
+
+
+    // var testObj = {
+    //     foo: test
+    // } 
+    // testObj.foo()
+
+    // function test() {
+    //     console.log('这里test外面函数的this', this)
+    //     test1()
+    // }
+    // function test1() {
+    //     console.log('这里test1外面函数的this', this)
+    //     test2()
+    // }
+    // function test2() {
+    //     console.log('这是最后一层test2的this',this)
+    //     var test = function() {
+    //         console.log(this, '这是内部的函数执行结果')
+    //     }
+    //     test()
+    // }
+    // /**
+    // * 函数只是一个代码块，有自己的作用域
+    // */
+    // // var getId = document.getElementById.bind('document')
+    // // console.log(getId)
+    // var func = function(a, b, c) {
+    //     console.log(this, [a,b,c])
+    // }
+    // func.apply(undefined, [1])
+
+    // var fun = function(a,b,c) {
+    //     console.log(this === window)
+    // }
+
+    // var obj = {
+    //     test: fun,
+    //     name: 'text'
+    // }
+    // obj.test.apply(null)
+
+    // Function.prototype.bind = function(context) {
+    //     var self = this;
+    //     return function() {
+    //         return self.apply(context, arguments)
+    //     }
+    // }
+    // var funText = function() {
+    //     console.log(this.name)
+    // }.bind(obj)
+    // funText()
+
+    console.log('复杂版的 Function.prototype.bind 实现')
+    Function.prototype.bind = function() {
+        var self = this,
+            context = [].shift.call(arguments),
+            args = [].slice.call(arguments);
+        console.log(context, args)
+        // return function() {
+        //     return self.apply(context, [].concat.call(args, [].slice.call(arguments)))
+        // }
+    }
+    var obj = {name: 'seven'}
+    var fn = function() {
+    }.bind(obj, 1, 2, 3, 4, 5)
+    // let res = fn(6,7)
+    // console.log(fn)
+    // console.log()
+    // console.log(fn)
+    // var OBJ = [{name: 'seven'}, 1, 2]
+    // var context = [].shift.call(OBJ, 1)
+    // console.log(context)
+
+    var arr = [1, 2]
+    // arr.push(3)
+    // console.log(arr)
+
+    // Array.prototype.push = function() {
+    //     for(let i=0; i < arguments.length; i++) {
+    //         this[this.length+i] = arguments[i]
+    //     }
+    //     console.log(this)
+    // }
+    // arr.push(3)
+    var a = {}
+    Array.prototype.push.call( a, 'first' );
+    var b = {a: 1}
+    console.log(a, b)
+        
+</script>

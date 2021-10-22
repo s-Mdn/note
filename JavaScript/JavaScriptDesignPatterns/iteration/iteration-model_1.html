@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>迭代器模式</title>
+</head>
+<body>
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <!-- <script>
+        $.each( [1, 2, 3], function( i, n ){ 
+            console.log( '当前下标为： '+ i ); 
+            console.log( '当前值为:' + n ); 
+        });
+    </script> -->
+    <!-- <script>
+        console.log('实现自己的迭代器')
+        var each = function( ary, callback ){
+            for ( var i = 0, l = ary.length; i < l; i++ ){
+                callback.call( ary[i], i, ary[ i ] ); // 把下标和元素当作参数传给 callback 函数
+            }
+        }
+        each( [ 1, 2, 3 ], function( i, n ){
+            console.log(this)
+            alert ( [ i, n ] );
+        })
+    </script> -->
+    <!-- <script>
+        console.log('内部迭代器和外部迭代器')
+        var each = function( ary, callback ){
+            for ( var i = 0, l = ary.length; i < l; i++ ){
+                callback.call( ary[i], i, ary[ i ] ); // 把下标和元素当作参数传给 callback 函数
+            }
+        }
+        var compare = function( ary1, ary2 ){
+            if ( ary1.length !== ary2.length ){
+                throw new Error ( 'ary1 和 ary2 不相等' )
+            }
+
+
+            each( ary1, function( i, n ){ 
+                    if ( n !== ary2[ i ] ){ 
+                    throw new Error ( 'ary1 和 ary2 不相等' ); 
+                }
+            });
+            alert ( 'ary1 和 ary2 相等' );
+        }
+        compare( [ 1, 2, 3 ], [ 1, 2, 4 ] ); // throw new Error ( 'ary1 和 ary2 不相等' );
+    </script> -->
+    <script>
+        console.log('外部迭代器-----------');
+        var Iterator = function(obj) {
+            var current = 0;
+            var next = function() {
+                current += 1;
+            };
+            var isDone = function(){
+                return current >= obj.length;
+            };
+            var getCurrItem = function(){
+                return obj[ current ];
+            }
+            return {
+                next: next,
+                isDone: isDone,
+                getCurrItem: getCurrItem
+            }
+        }
+        var compare = function( iterator1, iterator2 ){
+            while( !iterator1.isDone() && !iterator2.isDone()) {
+                if ( iterator1.getCurrItem() !== iterator2.getCurrItem() ){
+                    throw new Error ( 'iterator1 和 iterator2 不相等' );
+                }
+                iterator1.next();
+                iterator2.next();
+            }
+            console.log ( 'iterator1 和 iterator2 相等' );
+        }
+        var iterator1 = Iterator( [ 1, 2, 3 ] );
+        var iterator2 = Iterator( [ 1, 2, 3 ] );
+        compare( iterator1, iterator2 );
+    </script>
+    <script>
+        console.log('迭代类数组对象和字面量对象')
+        $.each = function( obj, callback ) {
+            var value,
+                i = 0,
+                length = obj.length,
+                isArray = isArraylike( obj );
+            
+            if ( isArray ) {
+                for ( ; i < length; i++ ) {
+                    value = callback.call( obj[ i ], i, obj[ i ] );
+
+                    if ( value === false ) {
+                        break;
+                    }
+                }
+            } else {
+                for ( i in obj ) { // 迭代 object 对象
+                    value = callback.call( obj[ i ], i, obj[ i ] );
+                    if ( value === false ) {
+                        break;
+                    }
+                } 
+            }
+            return obj;
+        }
+    </script>
+    <script>
+        console.log('倒序迭代器')
+        var reverseEach = function( ary, callback ) {
+           for ( var l = ary.length - 1; l >= 0; l-- ) {
+            callback( l, ary[ l ] );
+           }
+        }
+        reverseEach( [0, 1, 2], function(i, n) {
+            console.log( i ,n )
+        })
+    </script>
+</body>
+</html>
