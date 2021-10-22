@@ -64,7 +64,6 @@
         Animate.prototype.update = function( pos ){ 
             this.dom.style[ this.propertyName ] = pos + 'px'; 
         };
-
         var div = document.getElementById( 'div' );
         var animate = new Animate( div );
         animate.start( 'left', 500, 1000, 'strongEaseOut' );
