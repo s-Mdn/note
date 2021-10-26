@@ -23,7 +23,7 @@
         // }
     })();
 </script> -->
-<script>
+<!-- <script>
     (function(){
         console.log('文件上传的例子-------------------0')
 
@@ -93,8 +93,8 @@
             } 
         ]);
     })();
-</script>
-<script>
+</script> -->
+<!-- <script>
     (function(){
         // 享元模式重构文件上传
 
@@ -165,9 +165,7 @@
             for ( var i = 0, file; file = files[ i++ ]; ){ 
                 var uploadObj = uploadManager.add( ++id, uploadType, file.fileName, file.fileSize ); 
             }
-
         }
-
         startUpload( 'plugin', [ 
             { 
                 fileName: '1.txt', 
@@ -197,5 +195,34 @@
             } 
         ]);
     })();
-    
+</script> -->
+<script>
+    (function() {
+        console.log('对象池实现----------------')
+        var toolTipFactory = function() {
+            var toolTipPool = []        // toolTip 对象池
+
+            return {
+                create: function() {
+                    if ( toolTipPool.length === 0 ){    // 如果对象池为空
+                        var div = document.createElement( 'div' ); // 创建一个 dom
+                        document.body.appendChild( div );
+                        return div
+                    } else {                            // 如果对象池里不为空
+                        return toolTipPool.shift(); // 则从对象池中取出一个 dom
+                    }
+                },
+                recover: function( tooltipDom ){
+                    return toolTipPool.push( tooltipDom ); // 对象池回收 dom
+                }
+            }
+        }();
+        // 第一次搜索的时，目前需要创建2个小气泡节点，为方便回收，用数组 ary 来记录它们
+        var ary = [];
+        for ( var i = 0, str; str = [ 'A', 'B' ][ i++ ]; ){
+            var toolTip = toolTipFactory.create();
+            toolTip.innerHTML = str;
+            ary.push( toolTip );
+        }
+    })()
 </script>
