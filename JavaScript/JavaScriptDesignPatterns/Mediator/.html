@@ -1,0 +1,46 @@
+<body></body>
+<script>
+    (function(){
+        // 中介者模式的例子——泡泡堂游戏
+
+        function Player( name ) {
+            this.name = name
+            this.enemy = null   // 敌人
+        }
+        Player.prototype.win = function() {
+            console.log( this.name + 'won' );
+        }
+        Player.prototype.lose = function() {
+            console.log( this.name + 'lose' )
+        }
+        Player.prototype.die = function() {
+            this.lose(); 
+            this.enemy.win();
+        }
+
+        // 接下来创建 2 个玩家对象：
+        var player1 = new Player( '皮蛋' ); 
+        var player2 = new Player( '小乖' );
+        // 给玩家相互设置敌人：
+        player1.enemy = player2; 
+        player2.enemy = player1;
+        // 当玩家 player1 被泡泡炸死的时候，只需要调用这一句代码便完成了一局游戏
+        player1.die();// 输出：皮蛋 lost、小乖 won
+
+
+
+        // 为游戏增加队伍
+        var player3 = new Player( '烦恼' )
+        var player4 = new Player( '闹心' )
+
+        var player5 = new Player( '开心' )
+        var player6 = new Player( '快乐' )
+        var player7 = new Player( '高兴' )
+        var player8 = new Player( '兴奋' )
+        
+        player1.partners= [player1,player2,player3,player4];
+        player1.enemies = [player5,player6,player7,player8];
+        Player5.partners= [player5,player6,player7,player8]; 
+        Player5.enemies = [player1,player2,player3,player4];
+    })();
+</script>

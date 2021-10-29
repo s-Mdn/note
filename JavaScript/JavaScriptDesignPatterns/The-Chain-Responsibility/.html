@@ -37,7 +37,7 @@
     })()
 </script> -->
  
-<script>
+<!-- <script>
     (function(){
         // 用职责链模式重构代码。把 500 元订单、200 元订单以及普通购买分成 3个函数
 
@@ -67,9 +67,9 @@
             } 
         };
     })()
-</script>
+</script> -->
 
-<script>
+<!-- <script>
     (function(){
         // 灵活可拆分的职责链节点
 
@@ -133,9 +133,9 @@
 
 
     })()
-</script>
+</script> -->
 
-<script>
+<!-- <script>
     (function(){
         // 异步的职责链
         var Chain = function( fn ) {
@@ -143,20 +143,22 @@
             this.successor = null;
         }
         Chain.prototype.setNextSuccessor = function( successor ) {
-            return this.successor = successor
+             this.successor = successor
+             return successor
         }
         Chain.prototype.passRequest = function() {
             var ret = this.fn.apply( this, arguments )
 
+            console.log(this, arguments, ret)
             if( ret === 'nextSuccessor' ) {
                 return this.successor && this.successor.passRequest.apply( this.successor, arguments );
             }
+            
             return ret
         }
         Chain.prototype.next= function(){ 
             return this.successor && this.successor.passRequest.apply( this.successor, arguments ); 
         };
-        
         var fnq = new Chain(function(){
             // console.log('答应了异步的职责链--------------fnq')
             return 'nextSuccessor'
@@ -171,26 +173,95 @@
         var fnr = new Chain(function(){
             console.log('答应了异步的职责链--------------fnr')
         })
-       
-        let ret = fnq.setNextSuccessor( fnw ).setNextSuccessor( fnr )
+        
+        let ret = fnq.setNextSuccessor(fnw)
         fnq.passRequest()
     })()
-</script>
-
-<!--<script>
-    (function(){
-        console.log('职责链模式')
-    })()
-</script>
+</script> -->
 
 <script>
     (function(){
-        console.log('职责链模式')
+        // 用 AOP 实现职责链
+        Function.prototype.after = function( fn ) {
+            var self = this
+            
+            return function() {
+                debugger
+                console.log(self, '-------self', ret)
+                var ret = self.apply( this, arguments )
+                
+                if( ret === 'nextSuccessor') {
+                    console.log(fn, '--------------------fn')
+                    return fn.apply( this, arguments )
+                }
+                return ret;
+            }
+        }
+
+        var order500 = function( orderType, pay, stock, order5 ){
+            if ( orderType === 1 && pay === true ){
+                console.log( '500 元定金预购, 得到 100 优惠券' );
+            } else {
+                return 'nextSuccessor'; // 我不知道下一个节点是谁，反正把请求往后面传递
+            }
+        }
+        var order200 = function( orderType, pay, stock, order2 ){
+            if ( orderType === 2 && pay === true ){
+                console.log( '200 元定金预购, 得到 50 优惠券' );
+            } else {
+                return 'nextSuccessor';
+            }
+        }
+        var orderNormal = function( orderType, pay, stock, orderNormal ){ 
+            if ( stock > 0 ){ 
+                console.log( '普通购买, 无优惠券' ); 
+            }else{ 
+                console.log( '手机库存不足' ); 
+            } 
+        }
+        
+        var order = order500.after( order200 ).after( orderNormal )
+
+        order( 3, true, 500 ); // 输出：普通购买，无优惠券
     })()
 </script>
 
-<script>
+<!-- <script>
     (function(){
-        console.log('职责链模式')
+        // 用职责链模式获取文件上传对象
+        Function.prototype.after = function( fn ) {
+            var self = this
+            return function() {
+                var ret = self.apply( this, arguments )
+                
+                if( ret === 'nextSuccessor') {
+                    return fn.apply( this, arguments )
+                }
+                return ret;
+            }
+        }
+        var getActiveUploadObj = function() {
+            try {
+                return new ActiveXObject("TXFTNActiveX.FTNUpload"); // IE 上传控件 
+            } catch (error) {
+                return 'nextSuccessor' ;
+            }
+        }
+
+        var getFlashUploadObj = function() {
+            if ( supportFlash() ){
+                var str = '<object type="application/x-shockwave-flash"></object>';
+                return $( str ).appendTo( $('body') );
+            }
+            return 'nextSuccessor' ;
+        }
+
+        var getFormUpladObj = function(){ 
+            return $( '<form><input name="file" type="file"/></form>' ).appendTo( $('body') ); 
+        };
+
+        var getUploadObj = getActiveUploadObj.after( getFlashUploadObj ).after( getFormUpladObj );
+
+        console.log( getUploadObj() );
     })()
 </script> -->
