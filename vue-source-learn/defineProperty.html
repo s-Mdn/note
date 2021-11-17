@@ -1,0 +1,68 @@
+<script>
+  (function () {
+    let car = {};
+    let val = 3000;
+    Object.defineProperty(car, "price", {
+      enumerable: true,
+      configurable: true,
+      get(newVal) {
+        console.log("price属性被读取了");
+        return val;
+      },
+      set(newVal) {
+        console.log("price属性被修改了", newVal);
+        val = newVal;
+      },
+    });
+    // car.price = 5000;
+    // console.log(car.price);
+  })();
+
+  (function () {
+    let data = {
+      value: "张三",
+      writable: false,
+      enumerable: true,
+    };
+    class Observer {
+      constructor(dat) {
+        this.dat = dat;
+        this.walk(dat);
+      }
+      walk(dat) {
+        // console.log(this.dat);
+        const keys = Object.keys(dat);
+        for (let i = 0; i < keys.length; i++) {
+          this.defineReactive(dat, keys[i]);
+        }
+      }
+      defineReactive(obj, key, val) {
+        if (arguments.length === 2) {
+          val = obj[key];
+        }
+        Object.defineProperty(obj, key, {
+          enumerable: true,
+          configurable: true,
+          get() {
+            console.log(`${key}属性被读取了`);
+            return val;
+          },
+          set(newVal) {
+            if (val === newVal) {
+              return;
+            }
+            console.log(`${key}属性被修改了`);
+            val = newVal;
+          },
+        });
+      }
+    }
+    let car = new Observer({
+      brand: "BMW",
+      price: 3000,
+    });
+    console.log(car.dat.brand, 64);
+    car.dat.brand  = 'Lancon'
+    console.log(car.dat.brand, 66);
+  })();
+</script>
