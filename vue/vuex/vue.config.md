@@ -46,9 +46,15 @@
 </font>
 
 * <font color=black size=1.5>
-    productionSourceMap
+    devServer  
 
-    Type: boolean
-    Default: true
-    生产环境释放需要 source map，可以将其设置为 false 以加速生产环境构建。
+    参考blog: https://blog.csdn.net/m0_50015961/article/details/109901080
+
+    devServer.proxy  
+    参考blog(可根据排序先后查看)  
+    https://blog.csdn.net/qq_35022980/article/details/116426534  
+    https://www.zjh336.cn/?id=2029
+    https://blog.csdn.net/weixin_41590375/article/details/112544130  
+    https://blog.csdn.net/weixin_44854986/article/details/113734998  
+
 </font>
