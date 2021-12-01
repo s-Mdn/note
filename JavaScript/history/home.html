@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>hash</title>
+</head>
+
+<body>
+    
+    <button class="router" to="/home">首页</button>
+    <button class="router" to="/content">内容</button>
+    <div class="router-view">
+        // 需要使用服务(open with live server)打开，否则会报错
+    </div>
+
+    <!-- <script>
+        // hash 模式
+        var btn = document.getElementsByClassName("router");
+        var view = document.getElementsByClassName("router-view")[0];
+
+        routes = [{
+                "path": "/home",
+                "component": "<p>我是首页的组件</p>"
+            },
+            {
+                "path": "/content",
+                "component": "<p>我是内容的组件</p>"
+            }
+        ]
+
+        // 当hash值发生改变时，显示不同的内容  这是进入页面时触发的
+        var hash = window.location.hash;
+        if (hash) {
+            var url = hash.substring(1)
+            renderView(url);
+        } else {
+            window.location.hash = "/";
+        }
+
+        // 点击时，使得hash值发生改变，也就使得显示改变
+        for (var i = 0; i < btn.length; i++) {
+            btn[i].onclick = function () {
+                var hash = this.getAttribute("to");
+                renderView(hash);
+            }
+        }
+
+        //hash值改变时  这是hash值发生改变时触发的
+        // 历史回退
+        window.onhashchange = function () {
+            var hash = window.location.hash;
+            if (hash) {
+                var url = hash.substring(1)
+                renderView(url);
+            } else {
+                window.location.hash = "/";
+            }
+        }
+
+        function renderView(url) {
+            for (var i = 0; i < routes.length; i++) {
+                if (routes[i]["path"] == url) {
+                    view.innerHTML = routes[i]["component"];
+                    window.location.hash = url;
+                }
+            }
+        }
+    </script> -->
+
+    <script>
+        // history 模式  pushState + onpopState事件
+        // 要想使用history模式，必须在后端配置一个文件  配置说明：https://router.vuejs.org/zh/guide/essentials/history-mode.html
+        // 文件名取为   .htaccess
+        var btn = document.getElementsByClassName("router");
+        var view = document.getElementsByClassName("router-view")[0];
+
+        routes = [{
+                "path": "/home",
+                "component": "<p>我是首页的组件</p>"
+            },
+            {
+                "path": "/content",
+                "component": "<p>我是内容的组件</p>"
+            }
+        ]
+
+        // 输入路径，对应的匹配
+        var url = window.location.pathname.substring(4);
+        renderView(url);
+
+        // 点击时
+        for (var i = 0; i < btn.length; i++) {
+            btn[i].onclick = function () {
+                var url = this.getAttribute("to");
+                renderView(url);
+            }
+        }
+
+        // 历史回退  监听历史管理发生改变
+        window.onpopstate = function (ev) {
+            console.log(ev)
+            view.innerHTML = ev.state;
+        }
+
+        function renderView(url) {
+            if (url) {
+                for (var i = 0; i < routes.length; i++) {
+                    if (routes[i]["path"] == url) {
+                        view.innerHTML = routes[i]["component"];
+                        // window.location.pathname="/Day"+url;  //我一开始想看能不能直接设置，结果发现不能
+                        // 因为改变window.location.pathname会导致页面再次刷新，那也这就死循环了
+                        // 所以要想其他的办法来改变url
+
+                        // 所以就出现了history.pushState()
+                        // 第一个参数：存储进历史管理的数据
+                        // 第二个参数：历史管理的title（还没实现，但需要占位）
+                        // 第三个参数： 路由的地址
+                        history.pushState(routes[i]["component"], "", url);
+                        //这就实现了
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
