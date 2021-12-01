@@ -21,11 +21,16 @@
         function Router(params){
             // 记录routes配置
             this.routes = params.routes || [];
+            
             // 记录路由模式
             this.mode = params.mode || 'hash';
-            console.log('this.mode', this.mode);
-            // 初始化
-            this.init = function(){
+            
+            // 调用初始化
+            this.init();
+        }
+        // 初始化
+        Router.prototype.init = function(){
+            console.log(0)
                 // 绑定路由响应事件
                 var that = this;
                 document.querySelectorAll(".router").forEach((item,index)=>{
@@ -76,9 +81,10 @@
                 }
                 this.routerChange();
             },
-            // 路由改变监听事件
-            this.routerChange = function(){
-                if (this.mode == 'hash'){
+        
+        // 路由改变监听事件
+        Router.prototype.routerChange = function(){
+            if (this.mode == 'hash'){
                     let nowHash=window.location.hash;
                     let index=this.routes.findIndex((item,index)=>{
                         return nowHash == ('#'+item.path);
@@ -116,10 +122,8 @@
                         }
                     }
                 }
-            }
-            // 调用初始化
-            this.init();
         }
+        
         new Router({
             mode: 'hash',
             routes:[
