@@ -1,0 +1,97 @@
+<script>
+  function multilArrExtract(target,  ObjProps={}) {
+    if (target !== null && typeof target === 'object') {
+        let cloneTarget = target instanceof Array ? [] : {}
+        if (ObjProps === null || !Object.keys(ObjProps).length) { throw  new Error('ObjProps cannot be empty') }
+        if (target instanceof Array) {
+            Object.values(target).forEach((item, index) => {
+                cloneTarget[index] = multilArrExtract(item, ObjProps)
+            })
+
+        } else {
+            Object.values(ObjProps).forEach((value, index) => {
+                let isGo = Object.keys(target).includes(value.oldProName)
+                if (isGo && value.newProName)
+                    cloneTarget[value.newProName] = multilArrExtract(target[value.oldProName], ObjProps)
+
+                if (isGo && !value.newProName)    // 使用同克隆体一样的属性名(参数体不定义的新的属性名)
+                    cloneTarget[value.oldProName] = multilArrExtract(target[value.oldProName], ObjProps)
+            })
+        }
+        return cloneTarget
+    }
+    return target
+  };
+
+
+let target = [  // 类似的多层数组数据结构
+    {
+        areaId: "1111130001",
+        areaName: "吉林省",
+        areaList: [{
+            areaId: "1111130101",
+            areaName: "长春市",
+            areaList: [{
+                areaId: "1111130102",
+                areaName: "南关区",
+                areaList: [{
+                    areaId: "1111130301",
+                    areaName: "南岭街道",
+                    wordIndex: "J",
+                    areaList: [],
+                    xzCode: "B"
+                }],
+                wordIndex: "Z"
+            }],
+            wordIndex: "S",
+            xzCode: "130100",
+        }],
+        wordIndex: "H",
+        xzCode: "130000",
+    },
+    
+    {
+        areaId: "1111130001",
+        areaName: "辽宁省",
+        areaList: [{
+            areaId: "1111130101",
+            areaName: "沈阳市",
+            areaList: [{
+                areaId: "1111130102",
+                areaName: "和平区",
+                areaList: [{
+                    areaId: "1111130301",
+                    areaName: "新华街道",
+                    wordIndex: "J",
+                    areaList: [],
+                    xzCode: "B"
+                }],
+                wordIndex: "Z"
+            }],
+            wordIndex: "S",
+            xzCode: "130100",
+        }],
+        wordIndex: "H",
+        xzCode: "130000",
+    },
+]
+  
+let ObjProps =  {   // 定义参数
+      argOne: {
+          oldProName: 'areaName',
+          newProName: 'label',
+      },
+      argTwo: {
+          oldProName: 'areaId',
+          newProName: 'value',
+      },
+      argThree: {
+          oldProName: 'areaList',
+      }
+  }
+
+  let res = multilArrExtract(target, ObjProps)
+  console.log(res)
+</script>
+
+

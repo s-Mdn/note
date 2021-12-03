@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="router_box">
+        <image src="../../images.png" style="width: 200px; height: 200px; display: block;" alt="不能显示图像" title="没看到"/>
         <a href="/home" class="router" replace="true">主页</a>
         <a href="/news" class="router">新闻</a>
         <a href="/team" class="router">团队</a>
@@ -21,7 +22,7 @@
         function Router(params){
             // 记录routes配置
             this.routes = params.routes || [];
-            
+
             // 记录路由模式
             this.mode = params.mode || 'hash';
             
@@ -30,7 +31,6 @@
         }
         // 初始化
         Router.prototype.init = function(){
-            console.log(0)
                 // 绑定路由响应事件
                 var that = this;
                 document.querySelectorAll(".router").forEach((item,index)=>{
@@ -134,6 +134,13 @@
                 { path:'*', redirect:'/home'}
             ]
         });
+    </script>
+
+    <script>
+        function parseInt(str, radix){
+            return str + '-' + radix
+        }
+        console.log(["1", "2", "3"].map(parseInt))
     </script>
 </body>
 </html>
